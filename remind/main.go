@@ -1,4 +1,4 @@
-//package main
+//package remind
 //
 //import (
 //	"fmt"
@@ -24,7 +24,7 @@
 //}
 //
 //
-//func main() {
+//func remind() {
 //	mux := &myMux{}
 //
 //	err := http.ListenAndServe("localhost:8081", mux)
@@ -45,20 +45,20 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello,"+r.URL.Path[1:])
 }
 
-func UserValidate(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	fmt.Println("path", r.URL.Path)
-	fmt.Println("scheme", r.URL.Scheme)
-	fmt.Println("method", r.Method)
-	for v, k := range r.Form {
-		fmt.Println("value", v)
-		fmt.Println("key", k)
-	}
-}
+//func UserValidate(w http.ResponseWriter, r *http.Request) {
+//	r.ParseForm()
+//	fmt.Println("path", r.URL.Path)
+//	fmt.Println("scheme", r.URL.Scheme)
+//	fmt.Println("method", r.Method)
+//	for v, k := range r.Form {
+//		fmt.Println("value", v)
+//		fmt.Println("key", k)
+//	}
+//}
 
 func main() {
 	http.HandleFunc("/", Index)
-	http.HandleFunc("/login", UserValidate)
+	//http.HandleFunc("/login", UserValidate)
 	err := http.ListenAndServe("localhost:8080", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err.Error())
