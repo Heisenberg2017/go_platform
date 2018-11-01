@@ -36,13 +36,19 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside HelloServer handler")
-	fmt.Fprintf(w, "Hello,"+r.URL.Path[1:])
+	b, err := ioutil.ReadFile("test.log")
+	if err != nil {
+		fmt.Print(err)
+	}
+	str := string(b)
+	fmt.Fprintf(w, "Hello,"+r.URL.Path[1:]+str)
 }
 
 //func UserValidate(w http.ResponseWriter, r *http.Request) {
