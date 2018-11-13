@@ -39,16 +39,40 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"time"
 )
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Inside HelloServer handler")
-	b, err := ioutil.ReadFile("test.log")
-	if err != nil {
-		fmt.Print(err)
+func check(e error) {
+	if e != nil {
+		panic(e)
 	}
+}
+
+func write(s []byte) {
+	fd, err := os.OpenFile("clockIn.dat", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	defer fd.Close()
+	check(err)
+	_, err = fd.Write(s)
+	check(err)
+}
+
+func Index(w http.ResponseWriter, r *http.Request) {
+	curTime := time.Now()
+	aftTime := time.Now()
+	clockOutTime := curTime.Add(time.Duration(8 * 60 * 60 * 1e9)).Format("2006-02-01 15:04:05 PM")
+	clockInTime := aftTime.Format("2006-02-01 15:04:05 PM")
+	write([]byte("Clock In:" + clockInTime + "Clock Out:" + clockOutTime + "\n"))
+
+	fmt.Println("Inside Index handler")
+	b, err := ioutil.ReadFile("clockIn.dat")
+	check(err)
 	str := string(b)
-	fmt.Fprintf(w, "Hello,"+r.URL.Path[1:]+str)
+	fmt.Fprintf(w, r.URL.Path[1:]+str)
+}
+
+func Icon(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Inside Icon handler")
 }
 
 //func UserValidate(w http.ResponseWriter, r *http.Request) {
@@ -64,6 +88,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", Index)
+	http.HandleFunc("/favicon.ico", Icon)
+
 	//http.HandleFunc("/login", UserValidate)
 	err := http.ListenAndServe("localhost:8080", nil)
 	if err != nil {
