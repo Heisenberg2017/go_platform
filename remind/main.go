@@ -38,6 +38,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"time"
@@ -57,22 +58,31 @@ func write(s []byte) {
 	check(err)
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
+func IndexHandle(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Inside Index Handler")
 	curTime := time.Now()
 	aftTime := time.Now()
-	clockOutTime := curTime.Add(time.Duration(8 * 60 * 60 * 1e9)).Format("2006-02-01 15:04:05 PM")
+	clockOutTime := curTime.Add(time.Duration(9 * 60 * 60 * 1e9)).Format("2006-02-01 15:04:05 PM")
 	clockInTime := aftTime.Format("2006-02-01 15:04:05 PM")
-	write([]byte("Clock In:" + clockInTime + "Clock Out:" + clockOutTime + "\n"))
+	write([]byte("Clock In:" + clockInTime + " Clock Out:" + clockOutTime + "\n"))
 
-	fmt.Println("Inside Index handler")
 	b, err := ioutil.ReadFile("clockIn.dat")
 	check(err)
 	str := string(b)
 	fmt.Fprintf(w, r.URL.Path[1:]+str)
 }
 
-func Icon(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Inside Icon handler")
+func IconHandle(_ http.ResponseWriter, _ *http.Request) {
+	fmt.Println("Inside Icon Handler")
+}
+
+func RandomHandle(w http.ResponseWriter, _ *http.Request) {
+	fmt.Println("Inside Random Handler")
+	arrFood := []string{"冬菇鸡", "酱排骨", "鸡腿", "甜甜鸭", "酱油鸡", "水煮肉片",
+		"酸菜鱼", "砂锅鸭", "虾", "可乐鸡", "金针菇鸡", "青瓜鸡", "焖排骨", "卤肉",
+		"烧鸭腿", "猪蹄", "土豆片", "莴笋", "豆角", "娃娃菜", "茄子", "青菜", "汤饭7",
+		"汤饭8", "粥", "牛腩面", "云吞", "蒸饺"}
+	fmt.Fprintf(w, arrFood[rand.Intn(len(arrFood)-1)])
 }
 
 //func UserValidate(w http.ResponseWriter, r *http.Request) {
@@ -87,8 +97,9 @@ func Icon(w http.ResponseWriter, r *http.Request) {
 //}
 
 func main() {
-	http.HandleFunc("/", Index)
-	http.HandleFunc("/favicon.ico", Icon)
+	http.HandleFunc("/", IndexHandle)
+	http.HandleFunc("/favicon.ico", IconHandle)
+	http.HandleFunc("/random", RandomHandle)
 
 	//http.HandleFunc("/login", UserValidate)
 	err := http.ListenAndServe("localhost:8080", nil)
