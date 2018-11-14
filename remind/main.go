@@ -77,12 +77,22 @@ func IconHandle(_ http.ResponseWriter, _ *http.Request) {
 }
 
 func RandomHandle(w http.ResponseWriter, _ *http.Request) {
+	var preHtml = `<!DOCTYPE html>
+<html>
+    <head>
+        <title>吃啥子</title>
+    </head>
+    <body>
+        <div class="div" style="font-size:150px">`
+	var sufHtml = `</div> 
+    </body>
+</html>`
 	fmt.Println("Inside Random Handler")
 	arrFood := []string{"冬菇鸡", "酱排骨", "鸡腿", "甜甜鸭", "酱油鸡", "水煮肉片",
 		"酸菜鱼", "砂锅鸭", "虾", "可乐鸡", "金针菇鸡", "青瓜鸡", "焖排骨", "卤肉",
 		"烧鸭腿", "猪蹄", "土豆片", "莴笋", "豆角", "娃娃菜", "茄子", "青菜", "汤饭7",
 		"汤饭8", "粥", "牛腩面", "云吞", "蒸饺"}
-	fmt.Fprintf(w, arrFood[rand.Intn(len(arrFood)-1)])
+	fmt.Fprintf(w, preHtml+arrFood[rand.Intn(len(arrFood)-1)]+sufHtml)
 }
 
 //func UserValidate(w http.ResponseWriter, r *http.Request) {
